@@ -1,6 +1,15 @@
 var x, y, numbX, numbY, w, h, started = 0;
 var matrix, tempMatrix;
 
+function cloneMatrix (matrix) {
+	var cloneMatrix = [];
+	for (var i = 0; i < matrix.length; i++) {
+		cloneMatrix[i] = matrix[i].slice();
+	}
+
+	return cloneMatrix;
+}
+
 (function ($) {
 
 	$(document).ready(function () {
@@ -20,6 +29,7 @@ var matrix, tempMatrix;
 		$("article .cell").css({ "width": w, "height": h }); 
 
 		$("article .cell").click(function () {
+
 			if (started) {
 				return;
 			}
@@ -68,9 +78,9 @@ var matrix, tempMatrix;
 
 	function drawFromMatrix() {
 		$("article #container .cell").each(function () {
-			if (matrix[$(this).attr('row')][$(this).attr('column')] && !$(this).hasClass('on')) {
+			if (matrix[$(this).attr('row')][$(this).attr('column')] == 1 && !$(this).hasClass('on')) {
 				$(this).addClass('on');
-			} else if (!matrix[$(this).attr('row')][$(this).attr('column')] && $(this).hasClass('on')) {
+			} else if (matrix[$(this).attr('row')][$(this).attr('column')] == 0 && $(this).hasClass('on')) {
 				$(this).removeClass('on');
 			}
 		});
@@ -82,7 +92,7 @@ var matrix, tempMatrix;
 	}
 
 	function changeGeneration() {
-		tempMatrix = matrix;
+		tempMatrix = cloneMatrix(matrix)
 
 		for (var i = 1; i < matrix.length-1; i++) {
 			for (var j=1; j < matrix[i].length-1; j++) {
@@ -94,7 +104,7 @@ var matrix, tempMatrix;
 				}
 			}
 		}
-		matrix = tempMatrix;
+		matrix = cloneMatrix(tempMatrix);
 
 		drawFromMatrix();
 
