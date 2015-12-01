@@ -32,6 +32,19 @@ article {
 	background-color: black;
 }
 
+footer {
+	position: fixed;
+	height: 80px;
+	width: 100%;
+	bottom: 0px;
+}
+
+#counter {
+	height: 80px;
+	line-height: 60px;
+	margin-left: 10px;
+}
+
 .button {
 	line-height: 40px;
 	text-align: center;

@@ -1,19 +1,20 @@
 var x, y, numbX, numbY, w, h, started = 0;
-var matrix, tempMatrix;
+var matrix, tempMatrix, generations = 0;
 
 (function ($) {
 
 	$(document).ready(function () {
 		x= $(window).width();
 		y= $(window).height()-100;
-		numbX = Math.floor(x / 10);
-		numbY = Math.floor(y / 10);
+		numbX = Math.floor(x / 15);
+		numbY = Math.floor(y / 15);
 		w = x / numbX;
 		h = y / numbY;
 
 		for (var i=0; i < numbY; i++) {
+			$("article #container").append('<span class="row row-'+i+'" row='+i+'></span>');
 			for (var j=0; j < numbX; j++) {
-				$("article #container").append('<div class="cell" row="'+i+'" column="'+j+'"></div>');
+				$("article #container .row-"+i+"").append('<div class="cell cell-'+j+'" col="'+j+'" ></div>');
 			}
 		}
 
@@ -35,6 +36,8 @@ var matrix, tempMatrix;
 			started = 0;
 			$("#start").text("Start");
 			matrix = null;
+			generations = 0;
+			updateGenerations();
 
 			$("article #container .cell").each(function () {
 				if ($(this).hasClass('on')) {
@@ -79,17 +82,7 @@ var matrix, tempMatrix;
 	function mapIntoMatrix() {
 		$("article #container .cell").each(function () {
 			if ($(this).hasClass('on')) {
-				matrix[$(this).attr('row')][$(this).attr('column')] = 1;
-			}
-		});
-	}
-
-	function drawFromMatrix() {
-		$("article #container .cell").each(function () {
-			if (matrix[$(this).attr('row')][$(this).attr('column')] && !$(this).hasClass('on')) {
-				$(this).addClass('on');
-			} else if (!matrix[$(this).attr('row')][$(this).attr('column')] && $(this).hasClass('on')) {
-				$(this).removeClass('on');
+				matrix[$(this).parent().attr('row')][$(this).attr('col')] = 1;
 			}
 		});
 	}
@@ -102,7 +95,16 @@ var matrix, tempMatrix;
 	function applyDiff(diff) {
 		for(var i =0; i < diff.length; i++) {
 			matrix[diff[i][0]][diff[i][1]] = diff[i][2];
+			if (diff[i][2]) {
+				$("article #container .row-"+diff[i][0]+" .cell-"+diff[i][1]+"").addClass('on');
+			} else {
+				$("article #container .row-"+diff[i][0]+" .cell-"+diff[i][1]+"").removeClass('on');
+			}
 		}
+	}
+
+	function updateGenerations() {
+		$("footer #counter-number").text(generations);
 	}
 
 	function changeGeneration() {
@@ -137,9 +139,10 @@ var matrix, tempMatrix;
 		}
 		applyDiff(diff);
 
-		drawFromMatrix();
+		generations++;
+		updateGenerations();
 
-		setTimeout(changeGeneration, 100);
+		setTimeout(changeGeneration, 250);
 	}
 
 
