@@ -17,7 +17,7 @@ var matrix, tempMatrix;
 			}
 		}
 
-		$("article .cell").css({ "width": w, "height": h }); 
+		$("article .cell").css({ "width": w, "height": h });
 
 		$("article .cell").click(function () {
 			if (started) {
@@ -28,12 +28,30 @@ var matrix, tempMatrix;
 				$(this).removeClass('on');
 			} else {
 				$(this).addClass('on');
-			}	
+			}
 		});
 
-		$("#button").click(function () {
-			start();
-			
+		$("#reset").click(function () {
+			started = 0;
+			$("#start").text("Start");
+			matrix = null;
+
+			$("article #container .cell").each(function () {
+				if ($(this).hasClass('on')) {
+					$(this).removeClass('on');
+				}
+			});
+		})
+
+		$("#start").click(function () {
+			if (started) {
+				started = 0;
+				$(this).text('Restart');
+			} else {
+				start();
+				$(this).text('Stop');
+			}
+
 		})
 	});
 
@@ -77,30 +95,52 @@ var matrix, tempMatrix;
 	}
 
 	function getNumberNeighbours(i, j) {
-		var n= matrix[i-1][j-1] + matrix[i-1][j] + matrix[i -1][j+1] + matrix[i][j-1] + matrix[i][j+1] + matrix[i+1][j-1] + matrix[i+1][j] + matrix[i+1][j+1];
+		var n= matrix[i-1][j-1] + matrix[i-1][j] + matrix[i-1][j+1] + matrix[i][j-1] + matrix[i][j+1] + matrix[i+1][j-1] + matrix[i+1][j] + matrix[i+1][j+1];
 		return n;
 	}
 
+	function applyDiff(diff) {
+		for(var i =0; i < diff.length; i++) {
+			matrix[diff[i][0]][diff[i][1]] = diff[i][2];
+		}
+	}
+
 	function changeGeneration() {
-		tempMatrix = matrix;
+		if (!started) {
+			return;
+		}
+		var diff = new Array();
 
 		for (var i = 1; i < matrix.length-1; i++) {
 			for (var j=1; j < matrix[i].length-1; j++) {
 				var n = getNumberNeighbours(i,j);
+
 				if (n < 2 || n > 3) {
-					tempMatrix[i][j] = 0;
-				} if (n == 3) {
-					tempMatrix[i][j] = 1;
+					if (matrix[i][j] != 0) {
+						var diffElem = new Array();
+						diffElem.push(i);
+						diffElem.push(j);
+						diffElem.push(0);
+						diff.push(diffElem);
+					}
+
+				} else if (n == 3) {
+					if (matrix[i][j] != 1) {
+						var diffElem = new Array();
+						diffElem.push(i);
+						diffElem.push(j);
+						diffElem.push(1);
+						diff.push(diffElem);
+					}
 				}
 			}
 		}
-		matrix = tempMatrix;
+		applyDiff(diff);
 
 		drawFromMatrix();
 
-
-		setTimeout(changeGeneration, 50);
+		setTimeout(changeGeneration, 100);
 	}
 
 
-})(jQuery); 
+})(jQuery);
