@@ -98,7 +98,11 @@ function cloneMatrix (matrix) {
 	}
 
 	function getNumberNeighbours(i, j) {
-		var n= matrix[i-1][j-1] + matrix[i-1][j] + matrix[i-1][j+1] + matrix[i][j-1] + matrix[i][j+1] + matrix[i+1][j-1] + matrix[i+1][j] + matrix[i+1][j+1];
+		var iplus = Math.min(i+1,numbY-1);
+		var iminus = Math.max(i-1,0);
+		var jplus = Math.min(j+1,numbX-1);
+		var jminus = Math.max(j-1,0);
+		var n= matrix[iminus][jminus] + matrix[iminus][j] + matrix[iminus][jplus] + matrix[i][jminus] + matrix[i][jplus] + matrix[iplus][jminus] + matrix[iplus][j] + matrix[iplus][jplus];
 		return n;
 	}
 
@@ -123,8 +127,8 @@ function cloneMatrix (matrix) {
 		}
 		var diff = new Array();
 
-		for (var i = 1; i < matrix.length-1; i++) {
-			for (var j=1; j < matrix[i].length-1; j++) {
+		for (var i = 0; i < matrix.length; i++) {
+			for (var j=0; j < matrix[i].length; j++) {
 				var n = getNumberNeighbours(i,j);
 
 				if (n < 2 || n > 3) {
